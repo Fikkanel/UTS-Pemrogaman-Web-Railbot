@@ -7,8 +7,9 @@
 ![License](https://img.shields.io/badge/License-Free-lightgrey)
 
 ---
-### Live Website ###
-kelompok4.2024b.my.id
+## 🌍 Demo Website
+Kamu dapat mengunjungi versi online proyek ini di:  
+👉 [https://kelompok4.2024b.my.id](https://kelompok4.2024b.my.id)
 
 ----
 
