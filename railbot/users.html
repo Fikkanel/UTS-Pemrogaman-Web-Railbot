@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Pengguna - RailBot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="body-admin requires-auth">
+    <div class="container-fluid page-container px-lg-4">
+        <div class="page-header">
+            <h2 class="mb-0">Manajemen Pengguna</h2>
+            <a href="../index.html" class="btn btn-light"><i class="fas fa-arrow-left me-2"></i> Kembali ke Web Profil</a>
+            </div>
+
+        <div id="alert-container-main"></div>
+
+        <div class="card-custom">
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn btn-gradient" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openUserModal()">
+                    <i class="fas fa-plus me-2"></i> Tambah Pengguna
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nama</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="6" class="text-center">Memuat data pengguna...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="userForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Tambah Pengguna Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="userId">
+                        <div id="alert-container-modal"></div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="fullName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password">
+                            <small class="form-text text-muted" id="passwordHelp">Kosongkan jika tidak ingin mengubah password.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role">
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                         <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="is_active" checked>
+                            <label class="form-check-label" for="is_active">Akun Aktif</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-gradient" id="submitBtn">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    let currentUserId = null;
+    let userModalInstance = null;
+
+    function showAlert(message, type, location = 'main') {
+        const containerId = location === 'main' ? 'alert-container-main' : 'alert-container-modal';
+        const alertContainer = document.getElementById(containerId);
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+        alertContainer.innerHTML = '';
+        alertContainer.appendChild(alertDiv);
+    }
+
+    async function fetchUsers() {
+        try {
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/users`);
+            if (!response.ok) throw new Error('Gagal mengambil data pengguna.');
+            
+            const data = await response.json();
+            const tableBody = document.getElementById('usersTableBody');
+            tableBody.innerHTML = ''; // Kosongkan tabel
+            
+            if (data.users.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada data pengguna.</td></tr>';
+                 return;
+            }
+
+            data.users.forEach(user => {
+                const row = `
+                    <tr>
+                        <td>${user.full_name}</td>
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td><span class="badge bg-${user.role === 'admin' ? 'success' : 'secondary'}">${user.role}</span></td>
+                        <td><span class="badge bg-${user.is_active ? 'primary' : 'warning'}">${user.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick='openUserModal(${JSON.stringify(user)})' title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})" ${user.id === currentUserId ? 'disabled' : ''} title="Hapus"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        } catch(error) {
+            showAlert(error.message, 'danger', 'main');
+        }
+    }
+
+    function openUserModal(user = null) {
+        document.getElementById('userForm').reset();
+        document.getElementById('alert-container-modal').innerHTML = '';
+        const modalTitle = document.getElementById('modalTitle');
+        const passwordHelp = document.getElementById('passwordHelp');
+        const passwordInput = document.getElementById('password');
+        const usernameInput = document.getElementById('username');
+        
+        if (user) { // Mode Edit
+            modalTitle.textContent = 'Edit Pengguna';
+            document.getElementById('userId').value = user.id;
+            usernameInput.value = user.username;
+            usernameInput.disabled = true; // Username tidak bisa diubah
+            document.getElementById('fullName').value = user.full_name;
+            document.getElementById('email').value = user.email;
+            document.getElementById('role').value = user.role;
+            document.getElementById('is_active').checked = user.is_active;
+            passwordInput.required = false;
+            passwordHelp.style.display = 'block';
+        } else { // Mode Tambah
+            modalTitle.textContent = 'Tambah Pengguna Baru';
+            document.getElementById('userId').value = '';
+            usernameInput.disabled = false;
+            passwordInput.required = true;
+            passwordHelp.style.display = 'none';
+            document.getElementById('is_active').checked = true;
+        }
+        if (userModalInstance) userModalInstance.show();
+    }
+
+    async function handleFormSubmit(event) {
+        event.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+
+        const userId = document.getElementById('userId').value;
+        const isEdit = !!userId;
+        const url = isEdit ? `${API_BASE_URL}/api/users/${userId}` : `${API_BASE_URL}/api/users`;
+        const method = isEdit ? 'PUT' : 'POST';
+
+        const data = {
+            username: document.getElementById('username').value,
+            full_name: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            role: document.getElementById('role').value,
+            is_active: document.getElementById('is_active').checked,
+        };
+        
+        const password = document.getElementById('password').value;
+        if (password.trim() !== '') {
+            data.password = password;
+        }
+
+        try {
+            const response = await fetchWithAuth(url, { method, body: JSON.stringify(data) });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || 'Gagal menyimpan data.');
+            
+            showAlert(result.message, 'success', 'main');
+            userModalInstance.hide();
+            fetchUsers();
+        } catch (error) {
+            showAlert(error.message, 'danger', 'modal');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Simpan';
+        }
+    }
+
+    async function deleteUser(userId) {
+        if (confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) {
+            try {
+                const response = await fetchWithAuth(`${API_BASE_URL}/api/users/${userId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Gagal menghapus pengguna.');
+                showAlert(result.message, 'success', 'main');
+                fetchUsers();
+            } catch (error) {
+                showAlert(error.message, 'danger', 'main');
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!getAuthToken()) {
+            window.location.href = 'login.html';
+            return;
+        }
+        userModalInstance = new bootstrap.Modal(document.getElementById('userModal'));
+        document.getElementById('userForm').addEventListener('submit', handleFormSubmit);
+
+        try {
+            // Cek role admin sebelum menampilkan data
+            const profileResponse = await fetchWithAuth(`${API_BASE_URL}/api/profile`);
+            const profileData = await profileResponse.json();
+            if (profileData.user.role !== 'admin') {
+                document.body.innerHTML = '<div class="alert alert-danger">Akses ditolak. Anda bukan admin.</div>';
+                return;
+            }
+            currentUserId = profileData.user.id;
+            fetchUsers();
+        } catch (e) {
+            document.body.innerHTML = '<div class="alert alert-danger">Gagal memverifikasi akses.</div>';
+        }
+    });
+</script>
+</body>
+</html>

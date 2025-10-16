@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pengguna - RailBot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="body-admin requires-auth">
+    <div class="container page-container">
+        <div class="page-header">
+            <h2 class="mb-0">Profil Pengguna</h2>
+            <a href="../index.html" class="btn btn-light"><i class="fas fa-arrow-left me-2"></i> Kembali ke Web Profil</a>
+            </div>
+
+        <div id="alert-container"></div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="card-custom h-100">
+                    <h3 class="mb-4 fw-semibold"><i class="fas fa-id-card me-2 text-primary"></i> Informasi Akun</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><strong>Nama Lengkap</strong> <span id="profile-fullname">Memuat...</span></li>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><strong>Username</strong> <span id="profile-username">Memuat...</span></li>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><strong>Email</strong> <span id="profile-email">Memuat...</span></li>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><strong>Role</strong> <span id="profile-role" class="badge bg-secondary rounded-pill">Memuat...</span></li>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><strong>Terakhir Login</strong> <span id="profile-lastlogin">Memuat...</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card-custom h-100">
+                    <h3 class="mb-4 fw-semibold"><i class="fas fa-key me-2 text-primary"></i> Ubah Password</h3>
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Password Saat Ini</label>
+                            <input type="password" class="form-control" id="current_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">Password Baru</label>
+                            <input type="password" class="form-control" id="new_password" required minlength="6">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Konfirmasi Password</label>
+                            <input type="password" class="form-control" id="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-gradient w-100 mt-2 py-2" id="changePasswordBtn">
+                            <span class="btn-text">Simpan Perubahan</span>
+                            <span class="btn-loading d-none"><span class="spinner-border spinner-border-sm"></span> Memproses...</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    // Fungsi untuk menampilkan alert
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alert-container');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+        alertContainer.innerHTML = '';
+        alertContainer.appendChild(alertDiv);
+    }
+
+    // Memuat data profil saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (!getAuthToken()) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        try {
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/profile`);
+            if (!response.ok) throw new Error('Gagal memuat data profil.');
+
+            const data = await response.json();
+            const user = data.user;
+
+            document.getElementById('profile-fullname').textContent = user.full_name;
+            document.getElementById('profile-username').textContent = user.username;
+            document.getElementById('profile-email').textContent = user.email;
+            const roleBadge = document.getElementById('profile-role');
+            roleBadge.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+            roleBadge.className = `badge rounded-pill bg-${user.role === 'admin' ? 'success' : 'primary'}`;
+            document.getElementById('profile-lastlogin').textContent = user.last_login ? new Date(user.last_login).toLocaleString('id-ID') : 'Belum pernah';
+
+        } catch (error) {
+            showAlert(error.message, 'danger');
+        }
+    });
+
+    // Menangani submit form ganti password
+    document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        const btnText = changePasswordBtn.querySelector('.btn-text');
+        const btnLoading = changePasswordBtn.querySelector('.btn-loading');
+
+        btnText.classList.add('d-none');
+        btnLoading.classList.remove('d-none');
+        changePasswordBtn.disabled = true;
+
+        const data = {
+            current_password: document.getElementById('current_password').value,
+            new_password: document.getElementById('new_password').value,
+        };
+        
+        // Validasi konfirmasi password di frontend
+        if (data.new_password !== document.getElementById('confirm_password').value) {
+            showAlert('Konfirmasi password baru tidak cocok.', 'danger');
+            btnText.classList.remove('d-none');
+            btnLoading.classList.add('d-none');
+            changePasswordBtn.disabled = false;
+            return;
+        }
+
+        try {
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/change-password`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Gagal mengubah password.');
+            }
+            
+            showAlert(result.message, 'success');
+            document.getElementById('changePasswordForm').reset();
+
+        } catch (error) {
+            showAlert(error.message, 'danger');
+        } finally {
+            btnText.classList.remove('d-none');
+            btnLoading.classList.add('d-none');
+            changePasswordBtn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>
