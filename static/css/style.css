@@ -1,14 +1,30 @@
 :root {
+    /* Palet Warna - Mode Terang */
     --warna-utama: #ffa500;
     --warna-teks: #121212;
+    --warna-teks-sekunder: #555;
     --warna-latar: #f8f9fa;
     --warna-putih: #ffffff;
+    --warna-bayangan: rgba(0, 0, 0, 0.08);
+    --warna-border: #ddd;
+
+    /* Palet Warna - Mode Gelap */
+    --bg-primary-dark: #0d1117;
+    --bg-secondary-dark: #161b22;
+    --text-primary-dark: #e6edf3;
+    --text-secondary-dark: #8b949e;
+    --border-dark: #30363d;
+    --shadow-color-dark: rgba(0, 0, 0, 0.2);
+
+    /* Variabel Universal */
     --font-utama: 'Poppins', sans-serif;
     --transisi: all 0.3s ease-in-out;
 }
 
 html {
     height: 100%;
+    /* Mengaktifkan deteksi mode terang/gelap oleh browser */
+    color-scheme: light dark;
 }
 
 body {
@@ -19,7 +35,8 @@ body {
     line-height: 1.7;
     display: flex;
     flex-direction: column;
-    height: 100vh; 
+    height: 100vh;
+    transition: var(--transisi);
 }
 
 .container {
@@ -31,12 +48,14 @@ body {
 
 header {
     background: var(--warna-putih);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 10px var(--warna-bayangan);
     padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
     flex-shrink: 0;
+    transition: var(--transisi);
+    border-bottom: 1px solid transparent;
 }
 
 nav {
@@ -85,8 +104,8 @@ nav {
 main {
     flex-grow: 1;
     overflow-y: auto;
-    -ms-overflow-style: none;  
-    scrollbar-width: none;  
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 main::-webkit-scrollbar {
@@ -97,7 +116,7 @@ main::-webkit-scrollbar {
 
 h1 { font-size: 2.8rem; line-height: 1.2; }
 h2 { font-size: 2.2rem; margin-bottom: 2rem; }
-.deskripsi { font-size: 1.1rem; color: #555; margin: 1.5rem 0 2.5rem; }
+.deskripsi { font-size: 1.1rem; color: var(--warna-teks-sekunder); margin: 1.5rem 0 2.5rem; }
 
 .tombol-utama {
     background: var(--warna-utama);
@@ -126,6 +145,7 @@ section {
 .hero {
     background-color: var(--warna-putih);
     text-align: left;
+    transition: var(--transisi);
 }
 .hero-content {
     display: flex;
@@ -148,15 +168,16 @@ section {
     text-align: left;
 }
 
-.kartu-fitur {
+.kartu-fitur, .kartu-tim {
     background: var(--warna-putih);
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 5px 25px var(--warna-bayangan);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    transition: var(--transisi);
 }
 
 
@@ -174,18 +195,6 @@ section {
     margin-top: 3rem;
 }
 
-.kartu-tim {
-    background: var(--warna-putih);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.07);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
 .kartu-tim:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -201,7 +210,6 @@ section {
     align-items: center;
     justify-content: center;
     color: #adb5bd;
-    /* Tambahan untuk menyesuaikan gambar */
     object-fit: cover;
     object-position: center;
 }
@@ -224,10 +232,13 @@ section {
 .form-grup input, .form-grup textarea {
     width: 100%;
     padding: 0.8rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--warna-border);
     border-radius: 8px;
     box-sizing: border-box;
     font-family: var(--font-utama);
+    background-color: var(--warna-latar);
+    color: var(--warna-teks);
+    transition: var(--transisi);
 }
 .error-message, .success-message { font-size: 0.9rem; margin-top: 5px; display: none; }
 .error-message { color: #d93025; }
@@ -243,6 +254,7 @@ footer {
     text-align: center;
     padding: 0.5rem 0;
     flex-shrink: 0;
+    transition: var(--transisi);
 }
 
 
@@ -319,7 +331,7 @@ footer {
         top: 70px;
         left: 0;
         background-color: var(--warna-putih);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px var(--warna-bayangan);
         text-align: center;
         
         opacity: 0;
@@ -336,5 +348,68 @@ footer {
     
     .nav-menu li {
         padding: 0.8rem 0;
+    }
+}
+
+/* =================================================== */
+/* ============= DARK MODE STYLES ==================== */
+/* =================================================== */
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--bg-primary-dark);
+        color: var(--text-primary-dark);
+    }
+
+    header, .hero, .nav-menu {
+        background: var(--bg-secondary-dark);
+        box-shadow: 0 2px 10px var(--shadow-color-dark);
+    }
+
+    header {
+         border-bottom: 1px solid var(--border-dark);
+    }
+
+    .nav-logo, .nav-menu a, .kartu-tim h3 {
+        color: var(--text-primary-dark);
+    }
+
+    .nav-toggle span {
+        background-color: var(--text-primary-dark);
+    }
+
+    .deskripsi, .kartu-tim p {
+        color: var(--text-secondary-dark);
+    }
+
+    .kartu-fitur, .kartu-tim {
+        background: var(--bg-secondary-dark);
+        box-shadow: 0 5px 25px var(--shadow-color-dark);
+        border: 1px solid var(--border-dark);
+    }
+
+    .kartu-tim:hover {
+        box-shadow: 0 10px 30px var(--shadow-color-dark);
+    }
+    
+    .kartu-tim .foto-placeholder {
+        background-color: var(--bg-primary-dark);
+        border: 1px solid var(--border-dark);
+    }
+
+    .form-grup input, .form-grup textarea {
+        background-color: var(--bg-primary-dark);
+        color: var(--text-primary-dark);
+        border: 1px solid var(--border-dark);
+    }
+
+    .form-grup input:focus, .form-grup textarea:focus {
+        border-color: var(--warna-utama);
+    }
+
+    footer {
+        background: #161b22;
+        color: var(--text-primary-dark);
+        border-top: 1px solid var(--border-dark);
     }
 }
