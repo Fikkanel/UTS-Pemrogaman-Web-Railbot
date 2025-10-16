@@ -46,15 +46,15 @@ UTS-Pemrogaman-Web-Railbot/
 Karena ini adalah aplikasi web statis, kamu bisa langsung membukanya di browser tanpa perlu server.
 
 ### Langkah-langkah:
-#1. Clone repositori:#
+# 1. Clone repositori:
    ```bash
    git clone https://github.com/Fikkanel/UTS-Pemrogaman-Web-Railbot.git
   ```
-#2. Masuk ke folder proyek:
+# 2. Masuk ke folder proyek:
 ```bash
 cd UTS-Pemrogaman-Web-Railbot
 ```
-#3. Buka file index.html menggunakan browser (klik langsung atau via “Open File” di editor).
+# 3. Buka file index.html menggunakan browser (klik langsung atau via “Open File” di editor).
 Jika kamu ingin menjalankannya di server lokal (mis. menggunakan Live Server di VS Code), hal itu juga bisa untuk melihat perubahan real time.
 
 # 💡 Teknologi yang Digunakan
