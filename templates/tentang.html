@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Kami - RailBot</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo/icon.ico') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="/" class="nav-logo">
+                <img src="{{ url_for('static', filename='logo/robot-icon.png') }}" alt="RailBot Logo">
+                <span>RailBot</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="/">Beranda</a></li>
+                <li><a href="/tentang.html">Tentang Kami</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Buka menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+    <main id="content-area">
+        <section class="tentang">
+            <div class="container">
+                <h2>Tentang Proyek RailBot</h2>
+                <p>RailBot dibangun menggunakan tumpukan teknologi modern untuk memberikan performa yang andal. Backend aplikasi ditenagai oleh <b>Flask (Python)</b> yang terhubung dengan <b>Google Generative AI</b>, sementara frontend dibangun secara interaktif menggunakan <b>HTML, CSS, dan JavaScript murni</b>.</p>
+            </div>
+        </section>
+        <section class="tim animated-section">
+            <div class="container">
+                <h2>Tim Pengembang</h2>
+                <div class="wadah-tim">
+                    <div class="kartu-tim">
+                        <img src="{{ url_for('static', filename='img/kentsa.jpg') }}" alt="Foto Kentsa" class="foto-placeholder">
+                        <h3>Gading Kent Sadewa</h3>
+                        <p>24091397031</p>
+                    </div>
+                    <div class="kartu-tim">
+                        <img src="{{ url_for('static', filename='img/fikkan.jpg') }}" alt="Foto Fikkan" class="foto-placeholder">
+                        <h3>M. Fikkan El Haq</h3>
+                        <p>24091397058</p>
+                    </div>
+                    <div class="kartu-tim">
+                        <img src="{{ url_for('static', filename='img/nabil.jpg') }}" alt="Foto Nabil" class="foto-placeholder">
+                        <h3>Nabil Fajar Ilham</h3>
+                        <p>24091397061</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="kontak animated-section">
+            <div class="container">
+                <h2>Hubungi Kami</h2>
+                <form id="contactForm" class="form-kontak" novalidate>
+                    <div class="form-grup">
+                        <label for="nama">Nama Lengkap</label>
+                        <input type="text" id="nama" name="nama" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-grup">
+                        <label for="email">Alamat Email</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-grup">
+                        <label for="pesan">Pesan</label>
+                        <textarea id="pesan" name="pesan" rows="4" required></textarea>
+                        <div class="error-message"></div>
+                    </div>
+                    <button type="submit" class="tombol-utama">Kirim Pesan</button>
+                    <div id="formSuccessMessage" class="success-message">Pesan Anda berhasil dikirim!</div>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 RailBot - Proyek UTS Pemrograman Web</p>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
