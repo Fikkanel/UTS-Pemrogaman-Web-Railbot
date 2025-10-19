@@ -3,6 +3,7 @@
 ![HTML](https://img.shields.io/badge/Code-HTML5-orange?logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/Style-CSS3-blue?logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/Script-JavaScript-yellow?logo=javascript&logoColor=black)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-Free-lightgrey)
 
