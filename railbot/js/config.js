@@ -1,1 +1,0 @@
-const API_BASE_URL = 'https://railbot-api.nakkif.my.id';
